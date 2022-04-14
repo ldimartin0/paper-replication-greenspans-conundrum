@@ -11,7 +11,6 @@ d_chg <- d_fil %>%
 	pivot_longer(cols = 2:last_col(), names_to = "series")
 
 
-
 ggplot(d_chg, aes(x = date, y = value, linetype = series)) +
 	geom_line() +
 	ylim(c(-1.5,1)) +
