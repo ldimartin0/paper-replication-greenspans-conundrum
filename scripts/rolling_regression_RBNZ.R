@@ -1,6 +1,7 @@
 library(tidyverse)
 library(rio)
 library(roll)
+library(lubridate)
 
 d <- import("data/RBNZ_clean.Rda")
 
@@ -32,15 +33,36 @@ fit_df <- fit_df %>%
 		
 d <- bind_cols(d, fit_df)
 
-d_g <- select(d, date, adj_r_sq)
+d_g <- d %>% 
+	select(date, adj_r_sq) %>% 
+	mutate(
+		date = as_date(date),
+		adj_r_sq_g = lead(adj_r_sq, n = 50)
+		) %>% 
+	filter(
+		date >= ymd("1986-01-01"),
+		date <= ymd("2008-05-01")
+	)
 
-ggplot(d_g, aes(x = date, y = adj_r_sq)) +
-	geom_line() +
-	geom_vline(xintercept =  lubridate::as_datetime(lubridate::ymd("1999-03-31"))) +
+g <- ggplot(d_g, aes(x = date, y = adj_r_sq_g)) +
+	geom_line(color = "blue") +
+	geom_vline(xintercept = ymd("1999-03-31")) +
 	geom_hline(yintercept = 0, linetype = "dashed") +
 	ylim(c(-.1, .45)) +
-	scale_x_datetime(date_breaks = "20 months") + 
-	labs(subtitle = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the \n New Zealand 10-Year Government Bond Yield on the Change in the RBNZ Cash Rate,January 1986 to May 2012") +
+	scale_x_date(
+		date_breaks = "20 months",
+		labels = scales::label_date("%m-%Y"),
+		expand = c(0,0)) + 
+	labs(
+		title = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the \n New Zealand 10-Year Government Bond Yield on the Change in the RBNZ Cash Rate, January 1986 to May 2012",
+		y = "Adjusted R-Squared",
+		x = "Date") +
 	theme_classic() +
-	theme(panel.grid.major.y = element_line())
+	theme(
+		panel.grid.major.y = element_line(),
+		plot.margin = margin(0, 0, 0, 0, "pt")
+		) +
+	theme(axis.line.y = element_blank())
+
+ggsave("graphs/RBNZ-overlay.png", g, bg = "transparent")
 
