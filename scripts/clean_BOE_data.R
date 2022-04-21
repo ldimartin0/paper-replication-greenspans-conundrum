@@ -34,3 +34,10 @@ d_out <- read_csv("data/BOE_clean.csv") %>%
 	export("data/BOE_clean.Rda")
 
 # recreate data with baserate.xls for 1970
+
+clean_except_date <- import("data/for_manual_imputation copy.csv") %>% 
+	remove_empty("cols")
+
+clean_except_date$date <- d_join$date
+
+export(clean_except_date, "data/BOE_super_clean.Rda")
