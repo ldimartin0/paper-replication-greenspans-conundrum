@@ -4,7 +4,7 @@ library(janitor)
 library(roll)
 library(lubridate)
 
-d <- import("data/BOE_super_clean.Rda")
+d <- import("data/BOE_clean_new_gilt.Rda")
 
 d <- d %>% 
 	mutate(
@@ -12,7 +12,7 @@ d <- d %>%
 		bank_rate_chg = bank_rate_end_month - lag(bank_rate_end_month)
 	)
 
-fit <- roll_lm(d$gilt_yield_chg, d$bank_rate_chg, width = 50, min_obs = 30)
+fit <- roll_lm(d$gilt_yield_chg, d$bank_rate_chg, width = 50, min_obs = 5)
 
 fit_df <- tibble(
 	r_sq = fit$r.squared,
@@ -36,9 +36,12 @@ d_g <- select(d, date, adj_r_sq) %>%
 	filter(
 		date <= ymd("2002-04-01"),
 		date >= ymd("1972-01-01")
-	) 
+	) %>% 
+	mutate(
+		adj_r_sq_g = lead(adj_r_sq, n = 50)
+	)
 
-ggplot(d_g, aes(x = date, y = adj_r_sq)) +
+ggplot(d_g, aes(x = date, y = adj_r_sq_g)) +
 	geom_line(group = 1) +
 	geom_vline(xintercept = ymd("1992-10-31")) +
 	geom_hline(yintercept = 0, linetype = "dashed") +
