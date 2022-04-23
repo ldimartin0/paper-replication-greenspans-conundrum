@@ -8,7 +8,7 @@ library(fredr)
 # gilt_yield_2 <- fredr(series_id = "INTGSBGBM193N")
 # bank_rate <- fredr(series_id = "BOERUKM")
 
-d <- left_join(gilt_yield_2, bank_rate, by = "date") %>% 
+d <- left_join(gilt_yield, bank_rate, by = "date") %>% 
 	select(
 		date,
 		gilt_yield = value.x,
@@ -46,7 +46,8 @@ d_g <- select(d, date, adj_r_sq) %>%
 	mutate(
 		adj_r_sq = as.double(adj_r_sq),
 		adj_r_sq_g = lead(adj_r_sq, 50)
-	)
+	) %>% 
+	drop_na()
 
 ggplot(d_g, aes(x = date, y = adj_r_sq_g)) +
 	geom_line(group = 1) +
@@ -57,7 +58,7 @@ ggplot(d_g, aes(x = date, y = adj_r_sq_g)) +
 		date_breaks = "20 months",
 		labels = scales::label_date("%m-%Y"),
 		expand = c(0,0)) + 
-	# labs(subtitle = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the \n New Zealand 10-Year Government Bond Yield on the Change in the RBNZ Cash Rate,January 1986 to May 2012") +
+	labs(subtitle = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the \n  10-Year Government Bond Yield on the Change in the RBNZ Cash Rate,January 1986 to May 2012") +
 	theme_bw() +
 	theme(
 		panel.grid.major.y = element_line(),

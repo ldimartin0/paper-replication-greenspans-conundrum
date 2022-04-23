@@ -1,3 +1,7 @@
+library(tidyverse)
+library(rio)
+
+
 d <- import("data/RBNZ_clean.Rda")
 	
 d_fil <- d %>% 
