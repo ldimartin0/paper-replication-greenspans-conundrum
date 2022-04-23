@@ -42,25 +42,30 @@ d_g <- d %>%
 	filter(
 		date >= ymd("1986-01-01"),
 		date <= ymd("2008-05-01")
+	) %>% 
+	mutate(
+		date = date + days(1)
 	)
 
 g <- ggplot(d_g, aes(x = date, y = adj_r_sq_g)) +
-	geom_line(color = "blue") +
-	geom_vline(xintercept = ymd("1999-03-31")) +
+	geom_line() +
+	geom_vline(xintercept = ymd("1999-03-01")) +
 	geom_hline(yintercept = 0, linetype = "dashed") +
-	ylim(c(-.1, .45)) +
 	scale_x_date(
-		date_breaks = "20 months",
-		labels = scales::label_date("%m-%Y"),
+		breaks = d_g$date[seq(1, length(d_g$date), by = 19)],
+		labels = scales::label_date("%b-%y"),
 		expand = c(0,0)) + 
+	scale_y_continuous(
+		limits = c(-.05, .45),
+		breaks = seq(-.05, .45, by = .05),
+		expand = c(0,0)) +
 	labs(
-		title = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the \n New Zealand 10-Year Government Bond Yield on the Change in the RBNZ Cash Rate, January 1986 to May 2012",
-		y = "Adjusted R-Squared",
-		x = "Date") +
+		title = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the New Zealand 10-Year Government Bond Yield on the Change in the RBNZ Cash Rate, January 1986 to May 2012",
+		y = "",
+		x = "") +
 	theme_classic() +
 	theme(
-		panel.grid.major.y = element_line(),
-		plot.margin = margin(0, 0, 0, 0, "pt")
+		panel.grid.major.y = element_line()
 		) +
 	theme(axis.line.y = element_blank())
 

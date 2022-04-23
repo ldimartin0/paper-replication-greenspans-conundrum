@@ -4,9 +4,8 @@ library(roll)
 library(lubridate)
 library(fredr)
 
-# gilt_yield <- fredr(series_id = "IRLTLT01GBM156N")
-# gilt_yield_2 <- fredr(series_id = "INTGSBGBM193N")
-# bank_rate <- fredr(series_id = "BOERUKM")
+gilt_yield <- fredr(series_id = "IRLTLT01GBM156N")
+bank_rate <- fredr(series_id = "BOERUKM")
 
 d <- left_join(gilt_yield, bank_rate, by = "date") %>% 
 	select(
@@ -15,7 +14,7 @@ d <- left_join(gilt_yield, bank_rate, by = "date") %>%
 		bank_rate = value.y
 	) %>% 
 	filter(
-		date >= ymd("1972-01-01"),
+		date >= ymd("1969-08-01"),
 		date <= ymd("2007-08-31")
 	) %>% 
 	mutate(
@@ -49,19 +48,24 @@ d_g <- select(d, date, adj_r_sq) %>%
 	) %>% 
 	drop_na()
 
-ggplot(d_g, aes(x = date, y = adj_r_sq_g)) +
+x_date_breaks <- d_g$date[seq(1, length(d_g$date), by = 24)]
+
+g <- ggplot(d_g, aes(x = date, y = adj_r_sq_g)) +
 	geom_line(group = 1) +
 	geom_vline(xintercept = ymd("1992-10-31")) +
-	geom_hline(yintercept = 0, linetype = "dashed") +
-	ylim(c(-.05, .75)) +
+	# geom_hline(yintercept = 0, linetype = "dashed") +
 	scale_x_date(
-		date_breaks = "20 months",
-		labels = scales::label_date("%m-%Y"),
+		breaks = x_date_breaks,
+		labels = scales::label_date("%b-%y"),
 		expand = c(0,0)) + 
-	labs(subtitle = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the \n  10-Year Government Bond Yield on the Change in the RBNZ Cash Rate,January 1986 to May 2012") +
-	theme_bw() +
+	scale_y_continuous(breaks = seq(-0.05, .6, by = .05)) +
+	labs(
+		title = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the 10-Year Gilt Yield on the Change in the BOE’s Policy Rate, January 1972 to June 2007",
+		x = "",
+		y = "") +
+	theme_classic() +
 	theme(
 		panel.grid.major.y = element_line(),
-		plot.margin = margin(0, 0, 0, 0, "pt"),
 		axis.line.y = element_blank())
 
+ggsave("graphs/BOE_rolling_regression.png", g)

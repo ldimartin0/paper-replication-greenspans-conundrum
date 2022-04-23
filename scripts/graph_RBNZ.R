@@ -1,5 +1,6 @@
 library(tidyverse)
 library(rio)
+library(scales)
 
 
 d <- import("data/RBNZ_clean.Rda")
@@ -12,22 +13,23 @@ d_fil <- d %>%
 	
 d_chg <- d_fil %>% 
 	select(date, contains("chg")) %>% 
-	pivot_longer(cols = 2:last_col(), names_to = "series") %>% 
+	pivot_longer(cols = 2:last_col(), names_to = "Series") %>% 
 	mutate(date = as_date(date))
 
+x_date_breaks <- d_chg$date[seq(1, length(d_chg$date), by = 30)]
 
-ggplot(d_chg, aes(x = date, y = value, linetype = series)) +
+g <- ggplot(d_chg, aes(x = date, y = value, linetype = Series)) +
 	geom_line() +
-	ylim(c(-1.5,1)) +
-	scale_linetype_manual(values = c("dashed", "solid")) +
-	labs(title = "New Zealand 10-Year Government Bond Yield and \n RBNZ Cash Rate, March 1999 to May 2012") +
+	scale_linetype_manual(values = c("dashed", "solid"), labels = c("Bond Yield", "Cash Rate")) +
 	scale_x_date(
-		date_breaks = "20 months",
-		labels = scales::label_date("%m-%Y"),
+		breaks = x_date_breaks,
+		labels = scales::label_date("%b-%y"),
 		expand = c(0,0)) +
+	scale_y_continuous(limits = c(-1.5, 1), breaks = seq(-1.5, 1, by = .5), expand = c(0,0)) +
+	labs(title = "New Zealand 10-Year Government Bond Yield and \n RBNZ Cash Rate, March 1999 to May 2012", x = "", y = "") +
 	theme_classic() +
 	theme(
 		panel.grid.major.y = element_line(),
-		plot.margin = margin(0, 0, 0, 0, "pt"),
 		axis.line.y = element_blank())
 
+ggsave("graphs/RBNZ_raw_data.png", g)
