@@ -60,9 +60,9 @@ g <- ggplot(d_g, aes(x = date, y = adj_r_sq_g)) +
 		breaks = seq(-.05, .45, by = .05),
 		expand = c(0,0)) +
 	labs(
-		title = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the New Zealand 10-Year Government Bond Yield on the Change in the RBNZ Cash Rate, January 1986 to May 2012",
-		y = "",
-		x = "") +
+		title = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change \n in the New Zealand 10-Year Government Bond Yield on the Change \nin the RBNZ Cash Rate, January 1986 to May 2012",
+		y = NULL,
+		x = NULL) +
 	theme_classic() +
 	theme(
 		panel.grid.major.y = element_line()

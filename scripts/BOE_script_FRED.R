@@ -60,9 +60,9 @@ g <- ggplot(d_g, aes(x = date, y = adj_r_sq_g)) +
 		expand = c(0,0)) + 
 	scale_y_continuous(breaks = seq(-0.05, .6, by = .05)) +
 	labs(
-		title = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change in the 10-Year Gilt Yield on the Change in the BOE’s Policy Rate, January 1972 to June 2007",
-		x = "",
-		y = "") +
+		title = "50-Month Adjusted R-Squared Estimates from a Rolling Regression of the Change \nin the 10-Year Gilt Yield on the Change in the BOE’s Policy Rate, \nJanuary 1972 to June 2007",
+		x = NULL,
+		y = NULL) +
 	theme_classic() +
 	theme(
 		panel.grid.major.y = element_line(),

@@ -26,7 +26,7 @@ g <- ggplot(d_chg, aes(x = date, y = value, linetype = Series)) +
 		labels = scales::label_date("%b-%y"),
 		expand = c(0,0)) +
 	scale_y_continuous(limits = c(-1.5, 1), breaks = seq(-1.5, 1, by = .5), expand = c(0,0)) +
-	labs(title = "New Zealand 10-Year Government Bond Yield and \n RBNZ Cash Rate, March 1999 to May 2012", x = "", y = "") +
+	labs(title = "New Zealand 10-Year Government Bond Yield and RBNZ Cash Rate, \nMarch 1999 to May 2012", x = NULL, y = NULL) +
 	theme_classic() +
 	theme(
 		panel.grid.major.y = element_line(),
